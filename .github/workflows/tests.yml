@@ -31,6 +31,7 @@ jobs:
       run: |
         mkdir -p data
         echo -e "hello\nworld\ntest" > data/words.txt
+        python run.py --init --dbname=data/words.db
     
     - name: Run tests with coverage
       run: |

@@ -88,7 +88,7 @@ def main():
     else:
         host = '127.0.0.1'
         port = 5050
-
+    dbname='data/words.db'
     if config and 'database' in config:
         db_name = args.dbname or config['database'].get('path', 'data/words.db')
     else:
