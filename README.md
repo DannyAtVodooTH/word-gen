@@ -59,6 +59,15 @@ python run.py
 
 The web interface will be available at `http://127.0.0.1:5050`
 
+### test
+
+```bash
+$> curl -X POST http://127.0.0.1:5050/words \
+     -H "Content-Type: application/json" \
+     -d '{"wordLength": 8, "numberOfWords": 2}'
+{"words":"flangers-firewood"}
+```
+
 ## Manual Installation
 
 If you prefer to install manually:
@@ -179,6 +188,13 @@ sudo systemctl restart word-generator
 - SQLAlchemy: Database ORM
 - Alembic: Database migrations
 - pytest: Testing framework
+
+
+## Development
+
+```
+
+```
 
 ## License
 

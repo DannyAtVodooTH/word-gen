@@ -1,3 +1,5 @@
+#!./venv/bin/python
+
 import argparse
 import sys
 import yaml
@@ -5,7 +7,6 @@ import os
 import logging
 from app.webapp import app, word_service
 from app.word_service import WordService
-from gunicorn.app.base import BaseApplication
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Word Generator Web Application')
@@ -61,19 +62,6 @@ def initialize_database(word_service):
         print(f"Error initializing database: {e}")
         sys.exit(1)
 
-class GunicornApplication(BaseApplication):
-    def __init__(self, app, options=None):
-        self.app = app
-        self.options = options or {}
-        super(GunicornApplication, self).__init__()
-
-    def load(self):
-        return self.app
-
-    def load_config(self):
-        for key, value in self.options.items():
-            self.cfg.set(key, value)
-
 def main():
     # Configure logging
     logging.basicConfig(level=logging.INFO)
@@ -102,7 +90,7 @@ def main():
     else:
         host = '127.0.0.1'
         port = 5050
-    dbname = 'data/words.db'
+    dbname='data/words.db'
     if config and 'database' in config:
         db_name = args.dbname or config['database'].get('path', 'data/words.db')
     else:
@@ -119,17 +107,7 @@ def main():
     import app.webapp as webapp
     webapp.init_word_service(word_service)
 
-    # Create Gunicorn application
-    options = {
-        'bind': f'{host}:{port}',  # Set host and port
-        'workers': 4,              # Adjust based on the number of cores available
-        'accesslog': '-',          # Log to stdout
-        'errorlog': '-',           # Log to stderr
-        'loglevel': 'info',        # Set log level to info for production
-    }
-
-    # Run the Gunicorn server
-    GunicornApplication(app, options).run()
+    app.run(host=host, port=port,debug=True,)
 
 if __name__ == '__main__':
-    main()
+    main() 
