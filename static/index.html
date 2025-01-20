@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Word Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Word Generator</h1>
+    <div>
+        <label for="wordLength">Word Length:</label>
+        <input type="number" id="wordLength" value="5" min="1">
+        
+        <label for="numberOfWords">Number of Words:</label>
+        <input type="number" id="numberOfWords" value="1" min="1">
+        
+        <button onclick="generateWords()">Generate</button>
+    </div>
+    <div class="result" id="result"></div>
+
+    <script>
+        async function generateWords() {
+            const wordLength = document.getElementById('wordLength').value;
+            const numberOfWords = document.getElementById('numberOfWords').value;
+            
+            try {
+                const response = await fetch('/words', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        wordLength: parseInt(wordLength),
+                        numberOfWords: parseInt(numberOfWords)
+                    })
+                });
+                
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to generate words');
+                }
+                document.getElementById('result').textContent = data.words;
+            } catch (error) {
+                document.getElementById('result').textContent = error.message;
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+</html> 

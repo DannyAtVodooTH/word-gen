@@ -1,0 +1,14 @@
+[Unit]
+Description=Word Generator Web Application
+After=network.target
+
+[Service]
+Type=simple
+User=word-gen
+Group=word-gen
+WorkingDirectory=/opt/word-gen
+Environment="PATH=/opt/word-gen/venv/bin"
+ExecStart=/opt/word-gen/venv/bin/python run.py --config /etc/word-gen/config.yaml
+
+[Install]
+WantedBy=multi-user.target 

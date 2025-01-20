@@ -1,0 +1,17 @@
+word-generator/
+├── app/
+│   ├── __init__.py
+│   ├── database.py
+│   ├── word_service.py
+│   └── webapp.py
+├── static/
+│   └── index.html
+├── tests/
+│   ├── __init__.py
+│   ├── test_database.py
+│   └── test_word_service.py
+├── data/
+│   └── words.txt
+├── requirements.txt
+├── README.md
+└── run.py 

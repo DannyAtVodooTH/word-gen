@@ -1,0 +1,52 @@
+# Python virtual environment
+venv/
+env/
+ENV/
+
+# Python byte-compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+coverage.xml
+*.cover
+.pytest_cache/
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Project specific
+# Database files
+*.db
+words.db
+
+# Data directory
+data/*
+!data/.gitkeep
+
+# Logs
+logs/
+*.log
+
+# Config files
+config/*.yaml
+!config/default.yaml
+
+# Environment variables
+.env
+.env.local 
