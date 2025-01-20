@@ -1,7 +1,7 @@
 # Word Generator Web Application
 
-[![Tests](https://github.com/DannyAtVodooTH/word-generator/actions/workflows/tests.yml/badge.svg)](https://github.com/DannyAtVodooTH/word-generator/actions/workflows/tests.yml)
-[![codecov](https://codecov.io/gh/DannyAtVodooTH/word-generator/branch/main/graph/badge.svg)](https://codecov.io/gh/DannyAtVodooTH/word-generator)
+[![Tests](https://github.com/DannyAtVodooTH/word-gen/actions/workflows/tests.yml/badge.svg)](https://github.com/DannyAtVodooTH/word-gen/actions/workflows/tests.yml)
+[![codecov](https://codecov.io/gh/DannyAtVodooTH/word-gen/branch/main/graph/badge.svg)](https://codecov.io/gh/DannyAtVodooTH/word-gen)
 
 A Flask-based web application that generates random words based on specified length and count. The application stores words in a SQLite database and provides both a web interface and REST API for generating random word combinations.
 
