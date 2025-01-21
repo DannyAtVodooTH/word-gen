@@ -165,6 +165,7 @@ sudo systemctl status word-generator
 - Database: `/opt/word-gen/data/words.db`
 - Word list: `/opt/word-gen/data/words.txt`
 - Service file: `/etc/systemd/system/word-generator.service`
+- Nginx config: `/etc/nginx/conf.d/word-gen.v-odoo.com.conf`
 
 ### Default Service Configuration
 
@@ -181,6 +182,20 @@ To modify the service configuration, edit `/etc/word-gen/config.yaml` and restar
 sudo nano /etc/word-gen/config.yaml
 sudo systemctl restart word-generator
 ```
+
+### Nginx Configuration
+
+The application is configured to run behind nginx with:
+- Domain: word-gen.v-odoo.com
+- Static files served directly by nginx
+- Reverse proxy to the gunicorn application
+
+To access the application:
+1. Add the domain to your hosts file:
+   ```bash
+   echo "127.0.0.1 word-gen.v-odoo.com" | sudo tee -a /etc/hosts
+   ```
+2. Access via browser: http://word-gen.v-odoo.com
 
 ## Dependencies
 
