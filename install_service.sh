@@ -3,6 +3,36 @@
 # Exit on error
 set -e
 
+# Function to check Python version
+check_python_version() {
+    local python_cmd=$1
+    if ! command -v "$python_cmd" &> /dev/null; then
+        return 1
+    fi
+    local version=$("$python_cmd" -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+    if (( $(echo "$version >= 3.9" | bc -l) )); then
+        echo "$python_cmd (version $version)"
+        return 0
+    fi
+    return 1
+}
+
+# Find suitable Python version
+echo "Checking for Python version >= 3.9..."
+PYTHON_CMD=""
+for cmd in python3.11 python3.10 python3.9 python3; do
+    if result=$(check_python_version "$cmd"); then
+        PYTHON_CMD="$cmd"
+        echo "Found suitable Python: $result"
+        break
+    fi
+done
+
+if [ -z "$PYTHON_CMD" ]; then
+    echo "Error: No suitable Python version found. Please install Python >= 3.9"
+    exit 1
+fi
+
 # Check if running as root
 if [ "$EUID" -ne 0 ]; then 
     echo "Please run as root"
@@ -45,7 +75,7 @@ fi
 # Set up virtual environment
 echo "Setting up virtual environment..."
 cd /opt/word-gen
-python3 -m venv venv
+$PYTHON_CMD -m venv venv
 source venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
