@@ -3,7 +3,7 @@
 [![Tests](https://github.com/DannyAtVodooTH/word-gen/actions/workflows/tests.yml/badge.svg)](https://github.com/DannyAtVodooTH/word-gen/actions/workflows/tests.yml)
 [![codecov](https://codecov.io/gh/DannyAtVodooTH/word-gen/branch/main/graph/badge.svg)](https://codecov.io/gh/DannyAtVodooTH/word-gen)
 
-A Flask-based web application that generates random words based on specified length and count. The application stores words in a SQLite database and provides both a web interface and REST API for generating random word combinations.
+A Flask-based web application that generates random words based on specified length and count. The application stores words in a SQLite database and provides both a web interface and REST API for generating random word combinations. Features dark mode support and can be installed as a Progressive Web App (PWA).
 
 ## Features
 
@@ -13,6 +13,10 @@ A Flask-based web application that generates random words based on specified len
 - SQLite database for word storage
 - Command-line options for database initialization and configuration
 - Unit tests for core functionality
+- Dark/Light mode support
+- PWA installation support
+- Responsive design
+- Offline capability
 
 ## Directory Structure
 
@@ -207,10 +211,61 @@ To access the application:
 
 ## Development
 
+### Setup Development Environment
+1. Create Python virtual environment:
+```bash
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
 ```
 
+2. Configure development settings:
+```bash
+cp config/default.yaml config/development.yaml
+# Edit config/development.yaml as needed
 ```
+
+### Icon Generation
+The project uses generated icons for PWA and favicon support. To regenerate icons:
+
+1. Set up the icon generation environment:
+```bash
+cd scripts
+chmod +x setup.sh
+./setup.sh
+```
+
+2. Generate icons from project root:
+```bash
+scripts/venv/bin/python scripts/generate_icons.py
+```
+
+This will generate all required icon sizes from the SVG source in `static/icon.svg`.
+
+### Running Development Server
+From the project root:
+```bash
+python run.py --config config/development.yaml
+```
+
+The application will be available at http://localhost:5050
+
+### Running Tests
+```bash
+python -m pytest tests/
+```
+
+## Project Structure
+See [directory_structure.md](directory_structure.md) for a complete overview of the project organization.
+
+## Development History
+- Brief overview: [project_overview.md](project_overview.md)
+- Detailed history: [project-history.md](project-history.md)
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Credits
+- Creator: [Danny Goossen](https://github.com/DannyAtVodooTH)
+- AI Assistant: Claude 3.5 Sonnet via [Cursor](https://cursor.sh)
