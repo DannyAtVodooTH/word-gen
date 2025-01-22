@@ -50,12 +50,18 @@ echo "Creating application directory..."
 mkdir -p /opt/word-gen
 mkdir -p /etc/word-gen
 
+# Store the source directory
+SOURCE_DIR=$(pwd)
+
 # Copy application files
 echo "Copying application files..."
-cp -r app static tests requirements.txt run.py install.sh /opt/word-gen/
+cp -r app static tests config requirements.txt run.py install.sh word-generator.service /opt/word-gen/
 
 # Create and copy config file
 echo "Creating configuration file..."
+if [ -f "${SOURCE_DIR}/config/default.yaml" ]; then
+    cp "${SOURCE_DIR}/config/default.yaml" /etc/word-gen/config.yaml
+else
 cat > /etc/word-gen/config.yaml << EOL
 server:
   host: "127.0.0.1"
@@ -63,6 +69,7 @@ server:
 database:
   path: "/opt/word-gen/data/words.db"
 EOL
+fi
 
 # Create data directory and download words file
 echo "Setting up data directory..."
@@ -82,11 +89,11 @@ pip install -r requirements.txt
 
 # Initialize database
 echo "Initializing database..."
-python run.py --init --config /etc/word-gen/config.yaml
+./venv/bin/python run.py --init --config /etc/word-gen/config.yaml
 
 # Copy systemd service file
 echo "Installing systemd service..."
-cp word-generator.service /etc/systemd/system/
+cp "${SOURCE_DIR}/word-generator.service" /etc/systemd/system/
 
 # Prompt for domain name
 read -p "Enter base domain (default: v-odoo.com): " BASE_DOMAIN
@@ -154,7 +161,49 @@ echo "Creating nginx configuration..."
 cat > "/etc/nginx/conf.d/${DOMAIN}.conf" << EOL
 server {
     listen 80;
+    listen [::]:80;
     server_name ${DOMAIN};
+
+    # Redirect all HTTP traffic to HTTPS
+    location / {
+        return 301 https://\$host\$request_uri;
+    }
+
+    # Allow certbot authentication
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name ${DOMAIN};
+
+    # SSL configuration
+    # Uncomment after obtaining certificates:
+    #ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
+    #ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
+    #ssl_trusted_certificate /etc/letsencrypt/live/${DOMAIN}/chain.pem;
+
+    # SSL configuration
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL_${DOMAIN//./_}:10m;
+    ssl_session_tickets off;
+
+    # Modern configuration
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers off;
+
+    # HSTS (uncomment if you're sure)
+    # add_header Strict-Transport-Security "max-age=63072000" always;
+
+    # OCSP Stapling
+    #ssl_stapling on;
+    #ssl_stapling_verify on;
+    resolver 1.1.1.1 1.0.0.1 valid=300s;
+    resolver_timeout 5s;
 
     include cloudflare_realip;
 
@@ -170,6 +219,11 @@ server {
         proxy_set_header CF-Connecting-IP \$http_cf_connecting_ip;
         proxy_set_header X-Forwarded-Host \$host;
         proxy_set_header X-Forwarded-Server \$host;
+        
+        # WebSocket support
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection "upgrade";
     }
 
     location /static/ {
@@ -177,8 +231,25 @@ server {
         expires 1h;
         add_header Cache-Control "public, no-transform";
     }
+
+    # Security headers
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "no-referrer-when-downgrade" always;
+    add_header Content-Security-Policy "default-src 'self' http: https: data: blob: 'unsafe-inline'" always;
 }
 EOL
+
+# Set permissions
+echo "Setting permissions..."
+chown -R word-gen:word-gen /opt/word-gen
+chown -R word-gen:word-gen /etc/word-gen
+chmod 755 /opt/word-gen
+chmod 755 /etc/word-gen
+chmod 644 /etc/word-gen/config.yaml
+chmod 644 /etc/systemd/system/word-generator.service
+chmod 644 "/etc/nginx/conf.d/${DOMAIN}.conf"
 
 # Test nginx configuration
 echo "Testing nginx configuration..."
@@ -192,16 +263,6 @@ else
     systemctl start nginx
 fi
 
-# Set permissions
-echo "Setting permissions..."
-chown -R word-gen:word-gen /opt/word-gen
-chown -R word-gen:word-gen /etc/word-gen
-chmod 755 /opt/word-gen
-chmod 755 /etc/word-gen
-chmod 644 /etc/word-gen/config.yaml
-chmod 644 /etc/systemd/system/word-generator.service
-chmod 644 "/etc/nginx/conf.d/${DOMAIN}.conf"
-
 # Reload systemd and enable service
 echo "Enabling and starting service..."
 systemctl daemon-reload
@@ -214,4 +275,20 @@ echo "Installation complete! To access the application:"
 echo "1. Add the following line to your /etc/hosts file:"
 echo "   127.0.0.1 ${DOMAIN}"
 echo "2. Access the application at: http://${DOMAIN}"
-echo "" 
+echo ""
+echo "To obtain SSL certificate with certbot:"
+echo "1. Install certbot and nginx plugin:"
+echo "   apt install certbot python3-certbot-nginx  # For Debian/Ubuntu"
+echo "   dnf install certbot python3-certbot-nginx  # For RHEL/CentOS"
+echo ""
+echo "2. Obtain certificate:"
+echo "   certbot --nginx -d ${DOMAIN}"
+echo "3. Edit nginx config to uncomment SSL directives:"
+echo "   nano /etc/nginx/conf.d/${DOMAIN}.conf"
+echo ""
+echo "4. Test automatic renewal:"
+echo "   certbot renew --dry-run"
+echo ""
+
+# Create directory for certbot
+mkdir -p /var/www/certbot 

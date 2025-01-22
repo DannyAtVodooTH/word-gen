@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Word Generator</title>
     <meta name="description" content="Generate random word combinations with specified length and count">
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/icon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/icon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/icon-180.png">
+    <link rel="shortcut icon" href="/static/favicon.ico">
     <link rel="manifest" href="/static/manifest.json">
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)">
@@ -136,6 +141,26 @@
             cursor: pointer;
             width: auto;
         }
+
+        .footer {
+            margin-top: 3rem;
+            padding: 1rem;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .creator-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        .creator-link:hover {
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
@@ -171,6 +196,13 @@
 
         <button onclick="generateWords()">Generate Words</button>
         <div class="result" id="result">Generated words will appear here</div>
+
+        <footer class="footer">
+            <p>
+                Creator: <a href="https://github.com/DannyAtVodooTH" class="creator-link">Danny Goossen</a> 👨‍💻<br>
+                AI Assistant: Claude 3.5 Sonnet 🤖 via <a href="https://cursor.sh" class="creator-link">Cursor</a> ⌨️
+            </p>
+        </footer>
     </div>
 
     <script>
