@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="512" height="512" version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
     <!-- Background -->
-    <rect width="512" height="512" rx="128" fill="#2563eb"/>
+    <rect width="512" height="512" rx="102.4" fill="#2563eb"/>
     
     <!-- Word segments -->
     <g fill="#ffffff" font-family="Arial, sans-serif" font-weight="bold">
@@ -12,4 +12,4 @@
         <!-- G -->
         <text x="280" y="460" font-size="240">G</text>
     </g>
-   </svg> 
+</svg> 
