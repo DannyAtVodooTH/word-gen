@@ -1,14 +1,15 @@
-<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
     <!-- Background -->
     <rect width="512" height="512" rx="128" fill="#2563eb"/>
     
     <!-- Word segments -->
     <g fill="#ffffff" font-family="Arial, sans-serif" font-weight="bold">
         <!-- W -->
-        <text x="120" y="220" font-size="160">W</text>
+        <text x="50" y="220" font-size="240">W</text>
         <!-- Dash -->
         <rect x="180" y="256" width="160" height="24" rx="12"/>
         <!-- G -->
-        <text x="280" y="380" font-size="160">G</text>
+        <text x="280" y="460" font-size="240">G</text>
     </g>
-</svg> 
+   </svg> 

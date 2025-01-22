@@ -20,7 +20,8 @@ def generate_icons():
         png_data = cairosvg.svg2png(
             url=svg_path,
             output_width=size,
-            output_height=size
+            output_height=size,
+            background_color='transparent'
         )
 
         # Save the icon
